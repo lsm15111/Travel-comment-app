@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "655602167655",
+    "project_id": "heej-e7747",
+    "storage_bucket": "heej-e7747.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655602167655:android:a8f07792b3e9a6be4d89c2",
+        "android_client_info": {
+          "package_name": "com.example.hee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "655602167655-bkinl1hqghb5o7m8l2sb50cihj4hie31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYRy3RFeMEsdnw2gDM7IjUjns7wnzOHsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "655602167655-bkinl1hqghb5o7m8l2sb50cihj4hie31.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
