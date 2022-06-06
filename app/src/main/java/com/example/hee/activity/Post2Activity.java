@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Post2Activity extends AppCompatActivity implements View.OnClickListener {
+public class Post2Activity extends AppCompatActivity {
 
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -69,7 +69,6 @@ public class Post2Activity extends AppCompatActivity implements View.OnClickList
         mDateText = findViewById(R.id.post2_date);
         mContentsText = findViewById(R.id.post2_contents);
         mNameText = findViewById(R.id.post2_name);
-        findViewById(R.id.post2_btn_comment).setOnClickListener(this);
 
         mPost2RecyclerView = findViewById(R.id.comment_recyclerview);
 
@@ -148,7 +147,6 @@ public class Post2Activity extends AppCompatActivity implements View.OnClickList
                                 String writedate = String.valueOf(shot2.get(FirebaseID.writedate));
                                 Post.Comment data2 = new Post.Comment(documentId,nicname, comments,writedate);
                                 mDatas.add(data2);
-                                Log.i("comment~~ ",data2.toString());
                             }
                             mAdapter = new Post2Adapter(mDatas);
                             mPost2RecyclerView.setAdapter(mAdapter);
@@ -158,11 +156,4 @@ public class Post2Activity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View view) {
-        Intent intent = new Intent(this, CommentActivity.class);
-        intent.putExtra(FirebaseID.documentId, id);
-
-        startActivity(intent);
-    }
 }
