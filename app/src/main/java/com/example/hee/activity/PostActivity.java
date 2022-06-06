@@ -1,12 +1,12 @@
 package com.example.hee.activity;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.hee.FirebaseID;
@@ -20,10 +20,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class PostActivity extends AppCompatActivity implements View.OnClickListener {
@@ -81,6 +79,7 @@ public class PostActivity extends AppCompatActivity implements View.OnClickListe
             data.put(FirebaseID.timestamp, FieldValue.serverTimestamp());
             data.put(FirebaseID.writedate, getTime());
             mStore.collection(FirebaseID.post).document(postId).set(data, SetOptions.merge());
+            Log.i("WWW Post postid",postId);
             finish();
         }
     }

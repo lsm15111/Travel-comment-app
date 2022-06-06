@@ -1,10 +1,8 @@
 package com.example.hee.fragment;
 
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +18,12 @@ import com.example.hee.FirebaseID;
 import com.example.hee.RecyclerViewItemClickListener;
 import com.example.hee.activity.MyPost2Activity;
 import com.example.hee.activity.MyPostActivity;
-import com.example.hee.activity.Post2Activity;
 import com.example.hee.databinding.FragmentMyListBinding;
 import com.example.hee.models.MyList;
 import com.example.hee.view.adapter.MyListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,18 +38,11 @@ import java.util.Map;
 public class MyListFragment extends Fragment implements View.OnClickListener, RecyclerViewItemClickListener.OnItemClickListener {
 
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
-
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView mListRecycleView;
     private MyListAdapter mAdapter;
     private List<MyList> mDatas;
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private String usernicname = "";
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    private String usernicname;
 
     @Nullable
     @Override
@@ -66,53 +55,55 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
 
         mListRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(), mListRecycleView, this));
 
+        if (mAuth.getCurrentUser() != null) {
+            mStore.collection(FirebaseID.user).document(mAuth.getCurrentUser().getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.getResult() != null) {
+                                usernicname = (String) task.getResult().getData().get(FirebaseID.nicname);
+                            }
+                        }
+                    });
+        }
 
         return binding.getRoot();
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
-        String nic = "";
         mDatas = new ArrayList<>();
-        mStore.collection(FirebaseID.user).document(mAuth.getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.getResult() != null) {
-                            usernicname = (String) task.getResult().getData().get(FirebaseID.nicname);
-                        }
-                    }
-                });
         mStore.collection(FirebaseID.mylist)
                 .orderBy(FirebaseID.timestamp, Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
-
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
                         if (queryDocumentSnapshots != null) {
                             mDatas.clear();
                             for (DocumentSnapshot snap : queryDocumentSnapshots.getDocuments()) {
-                                mDatas.clear();
                                 Map<String, Object> shot = snap.getData();
-                                String documentId = String.valueOf(shot.get(FirebaseID.documentId));
-                                String nicname = String.valueOf(shot.get(FirebaseID.nicname));
-                                String title = String.valueOf(shot.get(FirebaseID.title));
-                                String date = String.valueOf(shot.get(FirebaseID.date));
-                                String contents = String.valueOf(shot.get(FirebaseID.contents));
-                                String writedate = String.valueOf(shot.get(FirebaseID.writedate));
-                                MyList data = new MyList(documentId, nicname, title, date, contents, writedate);
-                                if (data.getNicname().contains(usernicname)) {
+                                if(String.valueOf(shot.get(FirebaseID.nicname)).equals(usernicname)) {
+                                    String documentId = String.valueOf(shot.get(FirebaseID.documentId));
+                                    String nicname = String.valueOf(shot.get(FirebaseID.nicname));
+                                    String title = String.valueOf(shot.get(FirebaseID.title));
+                                    String date = String.valueOf(shot.get(FirebaseID.date));
+                                    String contents = String.valueOf(shot.get(FirebaseID.contents));
+                                    String writedate = String.valueOf(shot.get(FirebaseID.writedate));
+                                    MyList data = new MyList(documentId, nicname, title, date, contents, writedate);
                                     mDatas.add(data);
                                 }
-                            }
 
+                            }
                             mAdapter = new MyListAdapter(mDatas);
                             mListRecycleView.setAdapter(mAdapter);
+
                         }
                     }
                 });
+
     }
 
     @Override
@@ -147,4 +138,10 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
         dialog.show();
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
 }

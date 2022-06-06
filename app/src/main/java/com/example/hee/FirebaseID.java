@@ -5,6 +5,7 @@ public class FirebaseID {
     public static String user = "user";
     public static String post = "post";
     public static String mylist = "mylist";
+    public static String comment = "comment";
 
     public static String documentId = "documentId";
     public static String nicname = "nicname";
@@ -16,4 +17,5 @@ public class FirebaseID {
     public static String contents = "contents";
     public static String timestamp = "timestamp";
     public static String writedate = "writedate";
+    public static String comments = "comments";
 }

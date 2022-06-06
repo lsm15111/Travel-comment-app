@@ -1,9 +1,9 @@
 package com.example.hee.fragment;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +19,12 @@ import com.example.hee.FirebaseID;
 import com.example.hee.RecyclerViewItemClickListener;
 import com.example.hee.activity.Post2Activity;
 import com.example.hee.activity.PostActivity;
-import com.example.hee.databinding.FragmentMyListBinding;
 import com.example.hee.databinding.FragmentPostListBinding;
 import com.example.hee.models.Post;
 import com.example.hee.view.adapter.PostAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,27 +39,33 @@ import java.util.Map;
 public class PostListFragment extends Fragment implements View.OnClickListener, RecyclerViewItemClickListener.OnItemClickListener{
 
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
-
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView mPostRecycleView;
-
     private PostAdapter mAdapter;
     private List<Post> mDatas;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    private String nicname;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        FragmentMyListBinding binding = FragmentMyListBinding.inflate(inflater);
-        binding.listPostEdit.setOnClickListener(this);
-        mPostRecycleView = binding.listRecyclerview;
+        FragmentPostListBinding binding = FragmentPostListBinding.inflate(inflater);
+        binding.postPostEdit.setOnClickListener(this);
+        mPostRecycleView = binding.postRecyclerview;
 
         mPostRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(), mPostRecycleView, this));
+        if (mAuth.getCurrentUser() != null) {
+            mStore.collection(FirebaseID.user).document(mAuth.getCurrentUser().getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.getResult() != null) {
+                                nicname = (String) task.getResult().getData().get(FirebaseID.nicname);
+                            }
+                        }
+                    });
+        }
 
         return binding.getRoot();
     }

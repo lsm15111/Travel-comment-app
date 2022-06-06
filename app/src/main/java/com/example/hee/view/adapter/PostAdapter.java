@@ -30,7 +30,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-
         Post data = datas.get(position);
         holder.nicname.setText("작성자:" + data.getNicname());
         holder.title.setText(data.getTitle());
