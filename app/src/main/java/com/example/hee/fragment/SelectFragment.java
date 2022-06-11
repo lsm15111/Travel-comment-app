@@ -1,5 +1,6 @@
 package com.example.hee.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.icu.text.CaseMap;
 import android.os.Bundle;
@@ -7,7 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -17,11 +20,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hee.FirebaseID;
+import com.example.hee.R;
 import com.example.hee.RecyclerViewItemClickListener;
 import com.example.hee.activity.Post2Activity;
 import com.example.hee.databinding.FragmentSelectBinding;
 import com.example.hee.models.Post;
-import com.example.hee.view.adapter.PostAdapter;
 import com.example.hee.view.adapter.SelectAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -42,6 +45,8 @@ public class SelectFragment extends Fragment implements View.OnClickListener, Re
     private List<Post> mDatas;
 
     private EditText mword;
+    private Button input1 ;
+    private InputMethodManager imm;
 
     int searchOption =0;
 
@@ -50,13 +55,16 @@ public class SelectFragment extends Fragment implements View.OnClickListener, Re
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         FragmentSelectBinding binding = FragmentSelectBinding.inflate(inflater);
+        imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
         mPostRecycleView = binding.recyclerview;
         Spinner spinner = binding.spinner;
         binding.searchBtn.setOnClickListener(this);
         mword = binding.searchWord;
+        input1 = binding.searchBtn;
         mPostRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(), mPostRecycleView, this));
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -123,6 +131,8 @@ public class SelectFragment extends Fragment implements View.OnClickListener, Re
                         }
                     }
                 });
+        imm.hideSoftInputFromWindow(input1.getWindowToken(), 0);
+
 
     }
 }

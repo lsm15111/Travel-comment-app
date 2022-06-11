@@ -79,7 +79,6 @@ public class PostActivity extends AppCompatActivity implements View.OnClickListe
             data.put(FirebaseID.timestamp, FieldValue.serverTimestamp());
             data.put(FirebaseID.writedate, getTime());
             mStore.collection(FirebaseID.post).document(postId).set(data, SetOptions.merge());
-            Log.i("WWW Post postid",postId);
             finish();
         }
     }

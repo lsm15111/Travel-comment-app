@@ -53,6 +53,7 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
         mListRecycleView = binding.listRecyclerview;
 
 
+
         mListRecycleView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(), mListRecycleView, this));
 
         if (mAuth.getCurrentUser() != null) {
@@ -61,7 +62,7 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.getResult() != null) {
+                            if (task.getResult() != null) {
                                 usernicname = (String) task.getResult().getData().get(FirebaseID.nicname);
                             }
                         }
@@ -77,6 +78,7 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
         super.onStart();
         mDatas = new ArrayList<>();
         mStore.collection(FirebaseID.mylist)
+                .whereEqualTo("nicname", usernicname)
                 .orderBy(FirebaseID.timestamp, Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -85,16 +87,14 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
                             mDatas.clear();
                             for (DocumentSnapshot snap : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> shot = snap.getData();
-                                if(String.valueOf(shot.get(FirebaseID.nicname)).equals(usernicname)) {
-                                    String documentId = String.valueOf(shot.get(FirebaseID.documentId));
-                                    String nicname = String.valueOf(shot.get(FirebaseID.nicname));
-                                    String title = String.valueOf(shot.get(FirebaseID.title));
-                                    String date = String.valueOf(shot.get(FirebaseID.date));
-                                    String contents = String.valueOf(shot.get(FirebaseID.contents));
-                                    String writedate = String.valueOf(shot.get(FirebaseID.writedate));
-                                    MyList data = new MyList(documentId, nicname, title, date, contents, writedate);
-                                    mDatas.add(data);
-                                }
+                                String documentId = String.valueOf(shot.get(FirebaseID.documentId));
+                                String nicname = String.valueOf(shot.get(FirebaseID.nicname));
+                                String title = String.valueOf(shot.get(FirebaseID.title));
+                                String date = String.valueOf(shot.get(FirebaseID.date));
+                                String contents = String.valueOf(shot.get(FirebaseID.contents));
+                                String writedate = String.valueOf(shot.get(FirebaseID.writedate));
+                                MyList data = new MyList(documentId, nicname, title, date, contents, writedate);
+                                mDatas.add(data);
 
                             }
                             mAdapter = new MyListAdapter(mDatas);
@@ -139,9 +139,5 @@ public class MyListFragment extends Fragment implements View.OnClickListener, Re
     }
 
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
 
-    }
 }

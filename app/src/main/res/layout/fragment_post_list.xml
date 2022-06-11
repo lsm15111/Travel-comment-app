@@ -23,7 +23,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#FFA7A7"
+        android:backgroundTint="#CC5CD1E5"
         android:src="@drawable/ic_edit" />
 
 

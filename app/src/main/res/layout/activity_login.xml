@@ -14,7 +14,7 @@
         android:layout_marginTop="200dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:hint="E-mail"
+        android:hint="이메일"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
         android:layout_marginTop="20dp"
         android:inputType="textPassword"
         android:ems="10"
-        android:hint="Password"
+        android:hint="비밀번호"
         app:layout_constraintEnd_toEndOf="@+id/login_email"
         app:layout_constraintStart_toStartOf="@+id/login_email"
         app:layout_constraintTop_toBottomOf="@+id/login_email" />
@@ -39,8 +39,7 @@
         android:layout_marginTop="24dp"
         android:text="회원가입"
         android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:background="#505050"
+        android:background="@drawable/signup_round_button"
         app:layout_constraintEnd_toEndOf="@+id/login_success"
         app:layout_constraintStart_toStartOf="@+id/login_success"
         app:layout_constraintTop_toBottomOf="@+id/login_success" />
@@ -51,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="로그인"
-        android:backgroundTint="#3DB7CC"
+        android:background="@drawable/round_button"
         app:layout_constraintEnd_toEndOf="@+id/login_password"
         app:layout_constraintStart_toStartOf="@+id/login_password"
         app:layout_constraintTop_toBottomOf="@+id/login_password" />

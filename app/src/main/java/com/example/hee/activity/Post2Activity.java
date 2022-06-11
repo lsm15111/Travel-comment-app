@@ -2,19 +2,23 @@ package com.example.hee.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hee.FirebaseID;
 import com.example.hee.R;
+import com.example.hee.RecyclerViewItemClickListener;
 import com.example.hee.models.Post;
 import com.example.hee.view.adapter.Post2Adapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Post2Activity extends AppCompatActivity {
+public class Post2Activity extends AppCompatActivity implements RecyclerViewItemClickListener.OnItemClickListener{
 
     private FirebaseFirestore mStore = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -47,6 +51,9 @@ public class Post2Activity extends AppCompatActivity {
 
     private TextView mTitleText, mDateText,mContentsText, mNameText;
     private EditText mComment;
+    private InputMethodManager imm;
+
+    private TextView text ;
 
     private String id;
     private String nicname;
@@ -65,10 +72,14 @@ public class Post2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post2);
 
+
+
         mTitleText = findViewById(R.id.post2_title);
         mDateText = findViewById(R.id.post2_date);
         mContentsText = findViewById(R.id.post2_contents);
         mNameText = findViewById(R.id.post2_name);
+        text = (TextView)findViewById(R.id.comment_edit_message);
+        imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         mPost2RecyclerView = findViewById(R.id.comment_recyclerview);
 
@@ -76,6 +87,7 @@ public class Post2Activity extends AppCompatActivity {
         id = getIntent.getStringExtra(FirebaseID.documentId);
         Log.e("ITEM DOCUMENT ID: ", id);
         mComment = findViewById(R.id.comment_edit_message);
+        mPost2RecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(Post2Activity.this, mPost2RecyclerView, this));
 
         findViewById(R.id.comment_btn_send).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +102,8 @@ public class Post2Activity extends AppCompatActivity {
                     data.put(FirebaseID.writedate, getTime());
                     mStore.collection(FirebaseID.post).document(id).collection(FirebaseID.comment).document(commentId).set(data, SetOptions.merge());
                 }
+                text.setText(null);
+                imm.hideSoftInputFromWindow(text.getWindowToken(), 0);
             }
         });
 
@@ -123,7 +137,7 @@ public class Post2Activity extends AppCompatActivity {
                                     mTitleText.setText(title);
                                     mDateText.setText(date);
                                     mContentsText.setText(contents);
-                                    mNameText.setText(name);
+                                    mNameText.setText("작성자:"+name);
                                 }
                             } else {
                                 Toast.makeText(Post2Activity.this,"",Toast.LENGTH_SHORT).show();
@@ -142,7 +156,7 @@ public class Post2Activity extends AppCompatActivity {
                             for (DocumentSnapshot snap : queryDocumentSnapshots.getDocuments()) {
                                 Map<String, Object> shot2 = snap.getData();
                                 String documentId = String.valueOf(shot2.get(FirebaseID.documentId));
-                                String nicname = String.valueOf(shot2.get(FirebaseID.nicname));
+                                String nicname =  String.valueOf(shot2.get(FirebaseID.nicname));
                                 String comments = String.valueOf(shot2.get(FirebaseID.comments));
                                 String writedate = String.valueOf(shot2.get(FirebaseID.writedate));
                                 Post.Comment data2 = new Post.Comment(documentId,nicname, comments,writedate);
@@ -156,4 +170,28 @@ public class Post2Activity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemClick(View view, int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("삭제 하시겠습니까?");
+        dialog.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mStore.collection(FirebaseID.post).document(id).collection(FirebaseID.comment).document(mDatas.get(position).getDocumentId()).delete();
+                Toast.makeText(Post2Activity.this, "삭제 되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(Post2Activity.this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setTitle("삭제 알림");
+        dialog.show();
+    }
 }
